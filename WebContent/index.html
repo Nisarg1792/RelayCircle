@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+
+<script type="text/javascript">
+	function changeImage(a) {
+		//alert(a.src);
+		document.getElementById("png").src = a.src;
+	}
+
+	function addCircle() {
+		var filename = document.getElementById("png").src.replace(/^.*[\\\/]/,
+				'');
+		//alert(filename);
+		var usr = document.getElementById("user").value;
+
+		sendToServer("add," + usr + "," + filename);
+
+	}
+
+	//establish the communication channel over a websocket
+	var ws = new WebSocket("ws://127.0.0.1:8090/circle");
+
+	// called when socket connection established
+	ws.onopen = function() {
+		appendLog("Connected to stock service! ")
+	};
+
+	// called when a message received from server
+	ws.onmessage = function(evt) {
+		//appendLog(evt.data)
+		dispCircle(evt.data);
+	};
+
+	// called when socket connection closed
+	ws.onclose = function() {
+		appendLog("Disconnected from stock service!")
+	};
+
+	// called in case of an error
+	ws.onerror = function(err) {
+		console.log("ERROR!", err)
+	};
+
+	// appends logText to log text area
+	function appendLog(logText) {
+		var log = document.getElementById("log");
+		log.value = log.value + logText + "\n"
+	}
+
+	function dispCircle(txt) {
+
+		//var log = document.getElementById("canv");
+		document.body.innerHTML = "";
+		document.write("<h1>Current Users and their selections!!</h1>");
+		document.write("<br>");
+
+		document.write("<table>");
+		document.write("<tr> <th> User Name </th> <th> Selection </th></tr>");
+		var JsonObject = JSON.parse(txt);
+		for (var int = 0; int < JsonObject.users.length; int++) {
+			document.write("<tr>");
+			document.write("<td>" + JsonObject.users[int].userName + " </td>");
+			document
+					.write("<td> <img src='./images/"+JsonObject.users[int].color+".png' height=\"40px\", width=\"40px\"></td>");
+
+			document.write("</tr>");
+
+		}
+		document.write("</table>");
+		document
+				.write("<h3>Click Refresh to go back to selection Screen!!</h3>");
+
+	}
+
+	// sends msg to the server over websocket
+	function sendToServer(msg) {
+		ws.send(msg);
+	}
+</script>
+
+</head>
+<body>
+
+	<div id="main_img">
+		<img id="png" src="./images/red.png" height="60px" , width="60px">
+	</div>
+
+	<p>
+		<b>Select Your Color<b></b>
+	</p>
+	<div id="thumb_img">
+		<img src='./images/black.png' onclick='changeImage(this);'
+			height="40px" , width="40px"> <img src='./images/blue.png'
+			onclick='changeImage(this);' height="40px" , width="40px"> <img
+			src='./images/cyan.png' onclick='changeImage(this);' height="40px"
+			, width="40px"> <img src='./images/green.png'
+			onclick='changeImage(this);' height="40px" , width="40px"> <img
+			src='./images/red.png' onclick='changeImage(this);' height="40px"
+			, width="40px"> <img src='./images/grey.png'
+			onclick='changeImage(this);' height="40px" , width="40px"> <img
+			src='./images/magenta.png' onclick='changeImage(this);' height="40px"
+			, width="40px"> <img src='./images/yellow.png'
+			onclick='changeImage(this);' height="40px" , width="40px">
+
+	</div>
+
+	<div id="login">
+		<p>
+			<b>Input Your Name or Initials (16 Chars Max)<b></b>
+		</p>
+		<input type="text" id="user" maxlength="16" />
+		<p>
+			<b>Click on Button to Enter Circle Field<b></b>
+		</p>
+		
+		<button onclick="addCircle()">Submit</button>
+		
+		<br />
+		<br />
+	</div>
+	<div id="canv">
+		<div id="cnt"></div>
+</body>
+</html>
