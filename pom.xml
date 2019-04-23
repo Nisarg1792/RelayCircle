@@ -5,9 +5,9 @@
 	<artifactId>jetty-websocket-example</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<properties>
+<!-- 	<properties>
 		<jetty.version>9.2.11.v20150529</jetty.version>
-	</properties>
+	</properties> -->
 
 	<build>
 		<plugins>
@@ -79,7 +79,7 @@
 <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
-        <version>20140107</version>
+<!--         <version>20140107</version> -->
     </dependency>
 	</dependencies>
 </project>
